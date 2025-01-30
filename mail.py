@@ -70,6 +70,7 @@ def parse_eml(file):
         if part.get_content_disposition() == 'attachment':
             file_name = part.get_filename()
             file_data = part.get_payload(decode=True)
-            mail_attach.append((file_name, file_data))
+            if not (file_name is None or file_data is None):
+                mail_attach.append((file_name, file_data))
 
     return mail_subject, mail_sender, mail_date, mail_body, mail_attach
