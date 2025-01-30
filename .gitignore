@@ -175,3 +175,4 @@ cython_debug/
 mail_*.tar
 mail_*.tgz
 mail.db
+mail_*.zip
