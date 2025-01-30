@@ -42,7 +42,7 @@ def parse_eml(file):
     msg = email.parser.BytesParser(policy=email.policy.default).parse(file)
     # Extract email subject, sender and date
     mail_subject = msg['subject']
-    mail_from = email.utils.parseaddr(msg['from'])[1]
+    mail_sender = email.utils.parseaddr(msg['from'])[1]
 
     try:
         mail_date = email.utils.parsedate_to_datetime(msg['date']).strftime('%Y-%m-%d %H:%M:%S')
@@ -72,4 +72,4 @@ def parse_eml(file):
             file_data = part.get_payload(decode=True)
             mail_attach.append((file_name, file_data))
 
-    return mail_subject, mail_from, mail_date, mail_body, mail_attach
+    return mail_subject, mail_sender, mail_date, mail_body, mail_attach
