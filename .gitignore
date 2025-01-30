@@ -173,3 +173,5 @@ cython_debug/
 # Mail
 *.eml
 mail_*.tar
+mail_*.tgz
+mail.db
