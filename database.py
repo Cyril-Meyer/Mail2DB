@@ -1,14 +1,25 @@
-import datetime
 import hashlib
+import pathlib
 import sqlite3
+import zipfile
 
 
 class EmailDB:
-    def __init__(self, filename='mail.db', init=True):
-        self.conn = sqlite3.connect(filename)
+    def __init__(self,
+                 db_filename='mail.db',
+                 attachments_filename='mail_attach.zip',
+                 init=True):
+        if not db_filename.endswith('.db'):
+            db_filename = db_filename + '.db'
+        if not attachments_filename.endswith('.zip'):
+            attachments_filename = attachments_filename + '.zip'
+        # SQLite DB
+        self.conn = sqlite3.connect(db_filename)
         self.cursor = self.conn.cursor()
         if init:
             self.init_database()
+        # ZIP attachments archive
+        self.zip = zipfile.ZipFile(attachments_filename, 'w', zipfile.ZIP_DEFLATED)
 
     def init_database(self):
         self.cursor.execute('''
@@ -49,6 +60,10 @@ class EmailDB:
         VALUES (?, ?, ?)
         ''', (email_id, file_name, file_hash))
 
+        file_out = file_hash + pathlib.Path(file_name).suffix
+        if not file_out in self.zip.namelist():
+            self.zip.writestr(file_out, file_data)
+
         self.conn.commit()
 
     def add(self, email):
@@ -59,5 +74,4 @@ class EmailDB:
 
     def close(self):
         self.conn.close()
-
-
+        self.zip.close()
